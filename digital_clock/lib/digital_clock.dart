@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:digital_clock/avatar.dart';
 import 'package:digital_clock/card_unit.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -18,7 +19,7 @@ enum _Element {
 
 final _lightTheme = {
   // _Element.background: Color(0xFF81B3FE),
-  _Element.text: Colors.white,
+  _Element.text: Colors.black,
   _Element.shadow: Colors.black,
 };
 
@@ -40,16 +41,19 @@ class DigitalClock extends StatefulWidget {
   _DigitalClockState createState() => _DigitalClockState();
 }
 
-class _DigitalClockState extends State<DigitalClock>
-    with TickerProviderStateMixin {
+class _DigitalClockState extends State<DigitalClock> {
   DateTime _dateTime = DateTime.now();
   Timer _timer;
+  bool toggleSecond = true;
 
-  AnimationController _controllerHour, _controllerMinute;
-  Animation<Offset> _offsetAnimation;
+  //location
+  String location;
 
-  bool toggleMinute = true;
-  bool toggleHour = true;
+  //temp
+  String tempString;
+  double tempLow;
+  double tempHigh;
+  WeatherCondition weatherCondition;
 
   @override
   void initState() {
@@ -57,12 +61,6 @@ class _DigitalClockState extends State<DigitalClock>
     widget.model.addListener(_updateModel);
     _updateTime();
     _updateModel();
-
-    _controllerHour =
-        AnimationController(vsync: this, duration: Duration(seconds: 3));
-    _controllerMinute =
-        AnimationController(vsync: this, duration: Duration(seconds: 3));
-    //..forward();
 
 //    _controller = AnimationController(
 //      duration: const Duration(seconds: 2),
@@ -91,21 +89,25 @@ class _DigitalClockState extends State<DigitalClock>
     _timer?.cancel();
     widget.model.removeListener(_updateModel);
     widget.model.dispose();
-    _controllerHour.dispose();
-    _controllerMinute.dispose();
     super.dispose();
   }
 
   void _updateModel() {
     setState(() {
       // Cause the clock to rebuild when the model changes.
+      location = widget.model.location;
+      tempString = widget.model.temperatureString;
+      tempHigh = widget.model.high;
+      tempLow = widget.model.low;
+
+      weatherCondition = widget.model.weatherCondition;
     });
   }
 
   void _updateTime() {
     setState(() {
       _dateTime = DateTime.now();
-      toggleMinute = !toggleMinute;
+      toggleSecond = !toggleSecond;
       // Update once per minute. If you want to update every second, use the
       // following code.
 //      _timer = Timer(
@@ -130,6 +132,7 @@ class _DigitalClockState extends State<DigitalClock>
         : _darkTheme;
     final hour =
         DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh').format(_dateTime);
+    final am = DateFormat('a').format(_dateTime);
     final minute = DateFormat('mm').format(_dateTime);
     final second = _dateTime.second;
 
@@ -142,7 +145,7 @@ class _DigitalClockState extends State<DigitalClock>
         Shadow(
           blurRadius: 0,
           color: colors[_Element.shadow],
-          offset: Offset(5, 0),
+          offset: Offset(4, 0),
         ),
       ],
     );
@@ -150,66 +153,146 @@ class _DigitalClockState extends State<DigitalClock>
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     final boxSize = height / 1.5;
-    final fontSize = boxSize - 40;
+    final fontSize = boxSize * 0.85;
+    final fontSizeSecond = boxSize * 0.4;
 
     return Container(
       color: colors[_Element.background],
       child: Center(
-        child: DefaultTextStyle(
-          style: defaultStyle,
-          child: Stack(
-            children: <Widget>[
-              Positioned(
-                  left: 0,
-                  top: offset,
-                  bottom: offset,
-                  right: 0,
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AnimatedSwitcher(
-                          duration: Duration(seconds: 5),
-                          transitionBuilder:
-                              (Widget child, Animation<double> animation) {
-                            return ScaleTransition(
-                                child: child, scale: animation);
-                          },
-                          child: Padding(
-                            key: ValueKey<int>(int.parse(hour)),
-                            padding: EdgeInsets.all(8.0),
-                            child: CardUnit(
-                              width: boxSize,
-                              height: boxSize,
-                              text: hour,
-                              fontSize: fontSize,
+        child: Stack(
+          children: <Widget>[
+            //location
+            Positioned(
+              top: offset,
+              left: offset,
+              right: offset,
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: CardUnit(
+                  width: width,
+                  height: boxSize / 4,
+                  text: location,
+                  fontSize: fontSize / 8,
+                ),
+              ),
+            ),
+
+            //clock with am pm
+            Positioned(
+                left: 0,
+                top: offset,
+                bottom: offset,
+                right: 0,
+                child: DefaultTextStyle(
+                    style: defaultStyle,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AnimatedSwitcher(
+                            duration: Duration(seconds: 5),
+                            transitionBuilder:
+                                (Widget child, Animation<double> animation) {
+                              return ScaleTransition(
+                                  child: child, scale: animation);
+                            },
+                            child: Padding(
+                              key: ValueKey<int>(int.parse(hour)),
+                              padding: EdgeInsets.all(8.0),
+                              child: CardUnit(
+                                width: boxSize,
+                                height: boxSize,
+                                text: hour,
+                                fontSize: fontSize,
+                              ),
                             ),
                           ),
-                        ),
-                        Icon(Icons.audiotrack,
-                            color: (toggleMinute)
-                                ? Colors.teal
-                                : Colors.black),
-                        AnimatedSwitcher(
-                          duration: Duration(seconds: 4),
-                          transitionBuilder:
-                              (Widget child, Animation<double> animation) {
-                            return ScaleTransition(
-                                child: child, scale: animation);
-                          },
-                          child: Padding(
-                            key: ValueKey<int>(int.parse(minute)),
-                            padding: EdgeInsets.all(8.0),
-                            child: CardUnit(
-                              width: boxSize,
-                              height: boxSize,
-                              text: minute,
-                              fontSize: fontSize,
+                          Text(
+                            ":",
+                            style: new TextStyle(
+                                color:
+                                    toggleSecond ? Colors.black : Colors.white,
+                                fontSize: fontSizeSecond ?? 20.0,
+                                fontWeight: FontWeight.bold,
+                                shadows: [
+                                  Shadow(
+                                    blurRadius: 0,
+                                    offset: Offset(0, 0),
+                                  ),
+                                ]),
+                          ),
+                          AnimatedSwitcher(
+                            duration: Duration(seconds: 4),
+                            transitionBuilder:
+                                (Widget child, Animation<double> animation) {
+                              return ScaleTransition(
+                                  child: child, scale: animation);
+                            },
+                            child: Padding(
+                              key: ValueKey<int>(int.parse(minute)),
+                              padding: EdgeInsets.all(8.0),
+                              child: CardUnit(
+                                width: boxSize,
+                                height: boxSize,
+                                text: minute,
+                                fontSize: fontSize,
+                              ),
                             ),
                           ),
-                        ),
-                      ])),
-            ],
-          ),
+                        ]))),
+            Positioned(
+              bottom: offset * 20,
+              right: offset,
+              child: CardUnit(
+                width: boxSize / 2.5,
+                height: boxSize / 4,
+                text: widget.model.is24HourFormat ? "" : am,
+                fontSize: fontSize / 4,
+              ),
+            ),
+
+            Positioned(
+              left: offset,
+              bottom: offset,
+              child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Avatar(
+                  width: boxSize / 4,
+                  height: boxSize / 4,
+                  //radius: 20,
+                  color: Colors.greenAccent,
+                  text: tempString,
+                  //fontSize: fontSize / 8,
+                ),
+
+                    Avatar(
+                      width: boxSize / 4,
+                      height: boxSize / 4,
+                      //radius: 20,
+                      color: Colors.greenAccent,
+                      text: "${tempHigh}",
+                      //fontSize: fontSize / 8,
+                    ),
+
+                    Avatar(
+                      width: boxSize / 4,
+                      height: boxSize / 4,
+                      //radius: 20,
+                      color: Colors.greenAccent,
+                      text: "${tempLow}",
+                      //fontSize: fontSize / 8,
+                    ),
+
+                    Avatar(
+                      width: boxSize / 4,
+                      height: boxSize / 4,
+                      //radius: 20,
+                      color: Colors.teal,
+                      text: describeEnum(weatherCondition),
+                      //fontSize: fontSize / 8,
+                    ),
+              ]),
+            ),
+          ],
         ),
       ),
     );

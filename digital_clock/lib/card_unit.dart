@@ -16,22 +16,27 @@ class CardUnit extends StatelessWidget {
   final double height;
   final double width;
   final double fontSize;
+  final FractionalOffset align;
 
-  CardUnit({Key key, this.text, this.height, this.width, this.fontSize } ): super(key: key);
+  CardUnit({Key key,
+    this.text,
+    this.height = 150.0,
+    this.width = 150.0,
+    this.fontSize = 100.0,
+    this.align = FractionalOffset.center } ): super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return new Container(
-      alignment: FractionalOffset.center,
-      height: height ?? 150.0,
-      width: width ?? 150.0,
+    return Container(
+      alignment: align,
+      height: height,
+      width: width,
 //      decoration: new BoxDecoration(
-//        border: new Border.all(color: new Color(0xFF9E9E9E)),
-//      ),
+//      border: new Border.all(color: new Color(0xFF9E9E9E)),
+//    ),
       child: Text(text,
         style: new TextStyle(
-            fontSize: fontSize ?? 100.0,
-            color: Colors.black,
+            fontSize: fontSize,
             fontWeight: FontWeight.bold
         ),
       ),
