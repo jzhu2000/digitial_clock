@@ -10,23 +10,30 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:weather_icons/weather_icons.dart';
 
 enum _Element {
   background,
   text,
   shadow,
+  weatherText,
+  locationText,
 }
 
 final _lightTheme = {
-  // _Element.background: Color(0xFF81B3FE),
+  _Element.background: Color(0xFF81B3FE),
   _Element.text: Colors.black,
   _Element.shadow: Colors.black,
+  _Element.weatherText: Colors.teal,
+  _Element.locationText: Colors.teal,
 };
 
 final _darkTheme = {
   _Element.background: Colors.black,
   _Element.text: Colors.white,
   _Element.shadow: Color(0xFF174EA6),
+  _Element.weatherText: Colors.teal,
+  _Element.locationText: Colors.teal,
 };
 
 /// A basic digital clock.
@@ -50,10 +57,12 @@ class _DigitalClockState extends State<DigitalClock> {
   String location;
 
   //temp
-  String tempString;
-  double tempLow;
-  double tempHigh;
-  WeatherCondition weatherCondition;
+  String tempDegree;
+  String tempUnit;
+  int tempLow;
+  int tempHigh;
+
+  IconData weatherIcon;
 
   @override
   void initState() {
@@ -61,18 +70,6 @@ class _DigitalClockState extends State<DigitalClock> {
     widget.model.addListener(_updateModel);
     _updateTime();
     _updateModel();
-
-//    _controller = AnimationController(
-//      duration: const Duration(seconds: 2),
-//      vsync: this,
-//    )..repeat(reverse: true);
-//    _offsetAnimation = Tween<Offset>(
-//      begin: Offset.zero,
-//      end: const Offset(1.5, 0.0),
-//    ).animate(CurvedAnimation(
-//      parent: _controller,
-//      curve: Curves.elasticIn,
-//    ));
   }
 
   @override
@@ -96,11 +93,44 @@ class _DigitalClockState extends State<DigitalClock> {
     setState(() {
       // Cause the clock to rebuild when the model changes.
       location = widget.model.location;
-      tempString = widget.model.temperatureString;
-      tempHigh = widget.model.high;
-      tempLow = widget.model.low;
+      var tempString = widget.model.temperatureString;
+      tempDegree = tempString
+          .substring(0, tempString.length - 2)
+          .substring(0, tempString.lastIndexOf('.'));
+      tempUnit = tempString.substring(tempString.length - 2);
+      tempHigh = widget.model.high.round();
+      tempLow = widget.model.low.round();
 
-      weatherCondition = widget.model.weatherCondition;
+      WeatherCondition weatherCondition = widget.model.weatherCondition;
+      switch (weatherCondition) {
+        case (WeatherCondition.cloudy):
+          weatherIcon = WeatherIcons.cloudy;
+          break;
+
+        case (WeatherCondition.foggy):
+          weatherIcon = WeatherIcons.fog;
+          break;
+
+        case (WeatherCondition.rainy):
+          weatherIcon = WeatherIcons.rain;
+          break;
+
+        case (WeatherCondition.sunny):
+          weatherIcon = WeatherIcons.day_sunny;
+          break;
+
+        case (WeatherCondition.thunderstorm):
+          weatherIcon = WeatherIcons.thunderstorm;
+          break;
+
+        case (WeatherCondition.windy):
+          weatherIcon = WeatherIcons.windy;
+          break;
+
+        default:
+          weatherIcon = null;
+          break;
+      }
     });
   }
 
@@ -135,8 +165,9 @@ class _DigitalClockState extends State<DigitalClock> {
     final am = DateFormat('a').format(_dateTime);
     final minute = DateFormat('mm').format(_dateTime);
     final second = _dateTime.second;
+    final today = DateFormat('yMd').format(_dateTime);
 
-    final offset = 2.0; //-fontSize / 7;
+
     final defaultStyle = TextStyle(
       color: colors[_Element.text],
       //fontFamily: 'PressStart2P',
@@ -150,11 +181,24 @@ class _DigitalClockState extends State<DigitalClock> {
       ],
     );
 
+    final weatherStyle = TextStyle(
+      color: colors[_Element.weatherText],
+      //fontFamily: 'PressStart2P',
+      //fontSize: fontSize,
+    );
+
+    final locationStyle = TextStyle(
+      color: colors[_Element.locationText],
+      //fontFamily: 'PressStart2P',
+      //fontSize: fontSize,
+    );
+
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     final boxSize = height / 1.5;
     final fontSize = boxSize * 0.85;
     final fontSizeSecond = boxSize * 0.4;
+    final offset = 2.0; //-fontSize / 7;
 
     return Container(
       color: colors[_Element.background],
@@ -165,14 +209,35 @@ class _DigitalClockState extends State<DigitalClock> {
             Positioned(
               top: offset,
               left: offset,
+              //right: offset,
+              child: DefaultTextStyle(
+                style: locationStyle,
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: CardUnit(
+                    width: width / 2,
+                    height: boxSize / 4,
+                    text: location,
+                    fontSize: fontSize / 8,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: offset,
               right: offset,
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: CardUnit(
-                  width: width,
-                  height: boxSize / 4,
-                  text: location,
-                  fontSize: fontSize / 8,
+              child: DefaultTextStyle(
+                style: locationStyle,
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: CardUnit(
+                    width: width / 3,
+                    height: boxSize / 4,
+                    text: today,
+                    fontSize: fontSize / 10,
+                    fontWeight: FontWeight.normal,
+                  ),
                 ),
               ),
             ),
@@ -245,53 +310,55 @@ class _DigitalClockState extends State<DigitalClock> {
               child: CardUnit(
                 width: boxSize / 2.5,
                 height: boxSize / 4,
-                text: widget.model.is24HourFormat ? "" : am,
+                text: widget.model.is24HourFormat ? am : am,
                 fontSize: fontSize / 4,
               ),
             ),
 
             Positioned(
-              left: offset,
               bottom: offset,
-              child:
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Avatar(
-                  width: boxSize / 4,
-                  height: boxSize / 4,
-                  //radius: 20,
-                  color: Colors.greenAccent,
-                  text: tempString,
-                  //fontSize: fontSize / 8,
-                ),
-
-                    Avatar(
-                      width: boxSize / 4,
-                      height: boxSize / 4,
-                      //radius: 20,
-                      color: Colors.greenAccent,
-                      text: "${tempHigh}",
-                      //fontSize: fontSize / 8,
-                    ),
-
-                    Avatar(
-                      width: boxSize / 4,
-                      height: boxSize / 4,
-                      //radius: 20,
-                      color: Colors.greenAccent,
-                      text: "${tempLow}",
-                      //fontSize: fontSize / 8,
-                    ),
-
-                    Avatar(
-                      width: boxSize / 4,
-                      height: boxSize / 4,
-                      //radius: 20,
-                      color: Colors.teal,
-                      text: describeEnum(weatherCondition),
-                      //fontSize: fontSize / 8,
-                    ),
-              ]),
+              left: offset * 15,
+              child: CardUnit(
+                width: width / 2,
+                height: boxSize / 4,
+                text: "Hi ${tempHigh}  Lo ${tempLow}",
+                fontSize: fontSize / 10,
+                fontWeight: FontWeight.normal,
+              ),
             ),
+
+            Positioned(
+              bottom: offset * 2,
+              left: offset,
+              right: offset,
+              child: CardUnit(
+                width: width,
+                height: boxSize / 4,
+                text: tempDegree,
+                fontSize: fontSize / 4,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+
+            Positioned(
+              bottom: offset * 8,
+              left: width / 2 - 30,
+              child: CardUnit(
+                width: boxSize / 4,
+                height: boxSize / 4,
+                text: tempUnit,
+                fontSize: fontSize / 10,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+
+            Positioned(
+                bottom: height / 5,
+                left: width / 3 + boxSize / 4,
+                child: Icon(
+                  weatherIcon,
+                  color: Colors.black45,
+                )),
           ],
         ),
       ),

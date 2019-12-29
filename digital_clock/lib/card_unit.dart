@@ -16,6 +16,7 @@ class CardUnit extends StatelessWidget {
   final double height;
   final double width;
   final double fontSize;
+  final FontWeight fontWeight;
   final FractionalOffset align;
 
   CardUnit({Key key,
@@ -23,6 +24,7 @@ class CardUnit extends StatelessWidget {
     this.height = 150.0,
     this.width = 150.0,
     this.fontSize = 100.0,
+    this.fontWeight = FontWeight.bold,
     this.align = FractionalOffset.center } ): super(key: key);
 
   @override
@@ -37,7 +39,7 @@ class CardUnit extends StatelessWidget {
       child: Text(text,
         style: new TextStyle(
             fontSize: fontSize,
-            fontWeight: FontWeight.bold
+            fontWeight: fontWeight,
         ),
       ),
     );
