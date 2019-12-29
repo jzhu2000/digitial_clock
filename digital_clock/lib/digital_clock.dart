@@ -21,7 +21,7 @@ enum _Element {
 }
 
 final _lightTheme = {
-  _Element.background: Color(0xFF81B3FE),
+  _Element.background: Colors.white70,
   _Element.text: Colors.black,
   _Element.shadow: Colors.black,
   _Element.weatherText: Colors.teal,
@@ -30,8 +30,8 @@ final _lightTheme = {
 
 final _darkTheme = {
   _Element.background: Colors.black,
-  _Element.text: Colors.white,
-  _Element.shadow: Color(0xFF174EA6),
+  _Element.text: Colors.white70,
+  _Element.shadow: Colors.teal, //Color(0xFF174EA6),
   _Element.weatherText: Colors.teal,
   _Element.locationText: Colors.teal,
 };
@@ -165,7 +165,7 @@ class _DigitalClockState extends State<DigitalClock> {
     final am = DateFormat('a').format(_dateTime);
     final minute = DateFormat('mm').format(_dateTime);
     final second = _dateTime.second;
-    final today = DateFormat('yMd').format(_dateTime);
+    final today =  DateFormat('E').format(_dateTime) +  "  " + DateFormat('yMd').format(_dateTime) ;
 
 
     final defaultStyle = TextStyle(
@@ -196,7 +196,7 @@ class _DigitalClockState extends State<DigitalClock> {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     final boxSize = height / 1.5;
-    final fontSize = boxSize * 0.85;
+    final fontSize = boxSize * 0.8;
     final fontSizeSecond = boxSize * 0.4;
     final offset = 2.0; //-fontSize / 7;
 
@@ -205,28 +205,10 @@ class _DigitalClockState extends State<DigitalClock> {
       child: Center(
         child: Stack(
           children: <Widget>[
-            //location
+
             Positioned(
-              top: offset,
-              left: offset,
-              //right: offset,
-              child: DefaultTextStyle(
-                style: locationStyle,
-                child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: CardUnit(
-                    width: width / 2,
-                    height: boxSize / 4,
-                    text: location,
-                    fontSize: fontSize / 8,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              top: offset,
-              right: offset,
+              top: offset*10,
+              right: offset*40,
               child: DefaultTextStyle(
                 style: locationStyle,
                 child: Padding(
@@ -244,9 +226,24 @@ class _DigitalClockState extends State<DigitalClock> {
 
             //clock with am pm
             Positioned(
+              top: offset * 5,
+              right: offset,
+              child: DefaultTextStyle(
+                style: weatherStyle,
+                child: CardUnit(
+                  width: boxSize / 2.5,
+                  height: boxSize / 4,
+                  text: widget.model.is24HourFormat ? "" : am,
+                  fontSize: fontSize / 4,
+                  withBoxDecoration: widget.model.is24HourFormat ? false : true,
+                ),
+              ),
+            ),
+
+            Positioned(
                 left: 0,
-                top: offset,
-                bottom: offset,
+                top: offset * 10,
+                //bottom: offset,
                 right: 0,
                 child: DefaultTextStyle(
                     style: defaultStyle,
@@ -304,20 +301,13 @@ class _DigitalClockState extends State<DigitalClock> {
                             ),
                           ),
                         ]))),
-            Positioned(
-              bottom: offset * 20,
-              right: offset,
-              child: CardUnit(
-                width: boxSize / 2.5,
-                height: boxSize / 4,
-                text: widget.model.is24HourFormat ? am : am,
-                fontSize: fontSize / 4,
-              ),
-            ),
+
 
             Positioned(
-              bottom: offset,
+              bottom: offset*2,
               left: offset * 15,
+              child: DefaultTextStyle(
+                style: weatherStyle,
               child: CardUnit(
                 width: width / 2,
                 height: boxSize / 4,
@@ -326,11 +316,14 @@ class _DigitalClockState extends State<DigitalClock> {
                 fontWeight: FontWeight.normal,
               ),
             ),
+            ),
 
             Positioned(
-              bottom: offset * 2,
+              bottom: offset * 8,
               left: offset,
               right: offset,
+              child: DefaultTextStyle(
+                style: weatherStyle,
               child: CardUnit(
                 width: width,
                 height: boxSize / 4,
@@ -339,10 +332,13 @@ class _DigitalClockState extends State<DigitalClock> {
                 fontWeight: FontWeight.normal,
               ),
             ),
+            ),
 
             Positioned(
-              bottom: offset * 8,
+              bottom: offset * 15,
               left: width / 2 - 30,
+              child: DefaultTextStyle(
+                style: weatherStyle,
               child: CardUnit(
                 width: boxSize / 4,
                 height: boxSize / 4,
@@ -351,14 +347,32 @@ class _DigitalClockState extends State<DigitalClock> {
                 fontWeight: FontWeight.normal,
               ),
             ),
+            ),
 
             Positioned(
-                bottom: height / 5,
+                bottom: height / 4.5,
                 left: width / 3 + boxSize / 4,
                 child: Icon(
                   weatherIcon,
-                  color: Colors.black45,
+                  color: colors[_Element.weatherText],
                 )),
+
+            //location
+            Positioned(
+              bottom: offset*5,
+              right: offset*5,
+              child: DefaultTextStyle(
+                style: locationStyle,
+                  child: CardUnit(
+                    width: width / 3,
+                    height: boxSize / 5,
+                    text: location,
+                    fontSize: fontSize / 10,
+                    fontWeight: FontWeight.normal,
+                    align: FractionalOffset.centerLeft,
+                ),
+              ),
+            ),
           ],
         ),
       ),
