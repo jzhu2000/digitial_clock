@@ -4,7 +4,6 @@
 
 import 'dart:async';
 
-import 'package:digital_clock/avatar.dart';
 import 'package:digital_clock/card_unit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_clock_helper/model.dart';
@@ -22,10 +21,10 @@ enum _Element {
 
 final _lightTheme = {
   _Element.background: Colors.white70,
-  _Element.text: Colors.black,
-  _Element.shadow: Colors.black,
-  _Element.weatherText: Colors.teal,
-  _Element.locationText: Colors.teal,
+  _Element.text: Colors.black54,
+  _Element.shadow: Colors.blueAccent[100],
+  _Element.weatherText: Colors.blueAccent[100],
+  _Element.locationText: Colors.blueAccent[100],
 };
 
 final _darkTheme = {
@@ -113,6 +112,10 @@ class _DigitalClockState extends State<DigitalClock> {
 
         case (WeatherCondition.rainy):
           weatherIcon = WeatherIcons.rain;
+          break;
+
+        case (WeatherCondition.snowy):
+          weatherIcon = WeatherIcons.snow;
           break;
 
         case (WeatherCondition.sunny):
@@ -207,7 +210,7 @@ class _DigitalClockState extends State<DigitalClock> {
           children: <Widget>[
 
             Positioned(
-              top: offset*10,
+              top: offset*5,
               right: offset*40,
               child: DefaultTextStyle(
                 style: locationStyle,
@@ -235,7 +238,7 @@ class _DigitalClockState extends State<DigitalClock> {
                   height: boxSize / 4,
                   text: widget.model.is24HourFormat ? "" : am,
                   fontSize: fontSize / 4,
-                  withBoxDecoration: widget.model.is24HourFormat ? false : true,
+                  //withBoxDecoration: widget.model.is24HourFormat ? false : true,
                 ),
               ),
             ),
@@ -272,7 +275,7 @@ class _DigitalClockState extends State<DigitalClock> {
                             ":",
                             style: new TextStyle(
                                 color:
-                                    toggleSecond ? Colors.black : Colors.white,
+                                    toggleSecond ? Colors.black54 : Colors.white70,
                                 fontSize: fontSizeSecond ?? 20.0,
                                 fontWeight: FontWeight.bold,
                                 shadows: [
@@ -336,7 +339,7 @@ class _DigitalClockState extends State<DigitalClock> {
 
             Positioned(
               bottom: offset * 15,
-              left: width / 2 - 30,
+              left: width / 2 - 20,
               child: DefaultTextStyle(
                 style: weatherStyle,
               child: CardUnit(
