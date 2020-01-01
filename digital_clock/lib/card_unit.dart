@@ -43,6 +43,7 @@ class CardUnit extends StatelessWidget {
       ),
       child: Text(
         text,
+        overflow: TextOverflow.ellipsis,
         style: new TextStyle(
           fontSize: fontSize,
           fontWeight: fontWeight,

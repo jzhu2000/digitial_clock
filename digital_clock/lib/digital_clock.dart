@@ -92,7 +92,6 @@ class _DigitalClockState extends State<DigitalClock> {
     setState(() {
       // Cause the clock to rebuild when the model changes.
       location = widget.model.location;
-      if (location.length > 20) location = location.substring(0, 20);
       var tempString = widget.model.temperatureString;
       tempDegree = tempString
           .substring(0, tempString.length - 2)
