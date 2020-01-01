@@ -11,23 +11,24 @@ import 'package:flutter/material.dart';
  * @constructor Creates an empty group.
  */
 class CardUnit extends StatelessWidget {
-
   final String text;
   final double height;
   final double width;
   final double fontSize;
   final FontWeight fontWeight;
   final FractionalOffset align;
-  final bool  withBoxDecoration;
+  final bool withBoxDecoration;
 
-  CardUnit({Key key,
-    this.text,
-    this.height = 150.0,
-    this.width = 150.0,
-    this.fontSize = 100.0,
-    this.fontWeight = FontWeight.bold,
-    this.align = FractionalOffset.center,
-    this.withBoxDecoration = false} ): super(key: key);
+  CardUnit(
+      {Key key,
+      this.text,
+      this.height = 150.0,
+      this.width = 150.0,
+      this.fontSize = 100.0,
+      this.fontWeight = FontWeight.bold,
+      this.align = FractionalOffset.center,
+      this.withBoxDecoration = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +36,16 @@ class CardUnit extends StatelessWidget {
       alignment: align,
       height: height,
       width: width,
-
       decoration: BoxDecoration(
-      border: withBoxDecoration? Border.all(color: new Color(0xFF9E9E9E)) :  null,//Border.all(color: new Color(0xFF9E9E9E)),
-    ),
-      child: Text(text,
+        border: withBoxDecoration
+            ? Border.all(color: new Color(0xFF9E9E9E))
+            : null, //Border.all(color: new Color(0xFF9E9E9E)),
+      ),
+      child: Text(
+        text,
         style: new TextStyle(
-            fontSize: fontSize,
-            fontWeight: fontWeight,
+          fontSize: fontSize,
+          fontWeight: fontWeight,
         ),
       ),
     );

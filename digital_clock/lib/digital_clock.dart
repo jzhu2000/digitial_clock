@@ -20,11 +20,11 @@ enum _Element {
 }
 
 final _lightTheme = {
-  _Element.background: Colors.white70,
-  _Element.text: Colors.black54,
-  _Element.shadow: Colors.blueAccent[100],
-  _Element.weatherText: Colors.blueAccent[100],
-  _Element.locationText: Colors.blueAccent[100],
+  //_Element.background: Colors.white70,
+  _Element.text: Colors.black,
+  _Element.shadow: Colors.lightBlue,
+  _Element.weatherText: Colors.lightBlue,
+  _Element.locationText: Colors.lightBlue,
 };
 
 final _darkTheme = {
@@ -92,6 +92,7 @@ class _DigitalClockState extends State<DigitalClock> {
     setState(() {
       // Cause the clock to rebuild when the model changes.
       location = widget.model.location;
+      if (location.length > 20) location = location.substring(0, 20);
       var tempString = widget.model.temperatureString;
       tempDegree = tempString
           .substring(0, tempString.length - 2)
@@ -175,24 +176,18 @@ class _DigitalClockState extends State<DigitalClock> {
       color: colors[_Element.text],
       //fontFamily: 'PressStart2P',
       //fontSize: fontSize,
-      shadows: [
-        Shadow(
-          blurRadius: 0,
-          color: colors[_Element.shadow],
-          offset: Offset(4, 0),
-        ),
-      ],
     );
 
     final weatherStyle = TextStyle(
       color: colors[_Element.weatherText],
-      //fontFamily: 'PressStart2P',
+        fontWeight: FontWeight.w300,
+      fontFamily: 'Montserrat',
       //fontSize: fontSize,
     );
 
     final locationStyle = TextStyle(
       color: colors[_Element.locationText],
-      //fontFamily: 'PressStart2P',
+      fontFamily: 'Montserrat',
       //fontSize: fontSize,
     );
 
@@ -221,7 +216,7 @@ class _DigitalClockState extends State<DigitalClock> {
                     height: boxSize / 4,
                     text: today,
                     fontSize: fontSize / 10,
-                    fontWeight: FontWeight.normal,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -275,7 +270,7 @@ class _DigitalClockState extends State<DigitalClock> {
                             ":",
                             style: new TextStyle(
                                 color:
-                                    toggleSecond ? Colors.black54 : Colors.white70,
+                                    toggleSecond ? Colors.lightBlue : Colors.teal,
                                 fontSize: fontSizeSecond ?? 20.0,
                                 fontWeight: FontWeight.bold,
                                 shadows: [
