@@ -168,8 +168,9 @@ class _DigitalClockState extends State<DigitalClock> {
     final am = DateFormat('a').format(_dateTime);
     final minute = DateFormat('mm').format(_dateTime);
     final second = _dateTime.second;
-    final today =  DateFormat('E').format(_dateTime) +  "  " + DateFormat('yMd').format(_dateTime) ;
-
+    final today = DateFormat('E').format(_dateTime) +
+        "  " +
+        DateFormat('yMd').format(_dateTime);
 
     final defaultStyle = TextStyle(
       color: colors[_Element.text],
@@ -179,7 +180,7 @@ class _DigitalClockState extends State<DigitalClock> {
 
     final weatherStyle = TextStyle(
       color: colors[_Element.weatherText],
-        fontWeight: FontWeight.w300,
+      fontWeight: FontWeight.w300,
       fontFamily: 'Montserrat',
       //fontSize: fontSize,
     );
@@ -195,17 +196,16 @@ class _DigitalClockState extends State<DigitalClock> {
     final boxSize = height / 1.5;
     final fontSize = boxSize * 0.8;
     final fontSizeSecond = boxSize * 0.4;
-    final offset = 2.0; //-fontSize / 7;
+    final offset = 2.0;
 
     return Container(
       color: colors[_Element.background],
       child: Center(
         child: Stack(
           children: <Widget>[
-
             Positioned(
-              top: offset*5,
-              right: offset*40,
+              top: offset * 5,
+              right: offset * 40,
               child: DefaultTextStyle(
                 style: locationStyle,
                 child: Padding(
@@ -232,7 +232,6 @@ class _DigitalClockState extends State<DigitalClock> {
                   height: boxSize / 4,
                   text: widget.model.is24HourFormat ? "" : am,
                   fontSize: fontSize / 4,
-                  //withBoxDecoration: widget.model.is24HourFormat ? false : true,
                 ),
               ),
             ),
@@ -240,7 +239,6 @@ class _DigitalClockState extends State<DigitalClock> {
             Positioned(
                 left: 0,
                 top: offset * 10,
-                //bottom: offset,
                 right: 0,
                 child: DefaultTextStyle(
                     style: defaultStyle,
@@ -268,8 +266,9 @@ class _DigitalClockState extends State<DigitalClock> {
                           Text(
                             ":",
                             style: new TextStyle(
-                                color:
-                                    toggleSecond ? Colors.lightBlue : Colors.teal,
+                                color: toggleSecond
+                                    ? Colors.black
+                                    : Colors.white70,
                                 fontSize: fontSizeSecond ?? 20.0,
                                 fontWeight: FontWeight.bold,
                                 shadows: [
@@ -299,74 +298,57 @@ class _DigitalClockState extends State<DigitalClock> {
                           ),
                         ]))),
 
-
-            Positioned(
-              bottom: offset*2,
-              left: offset * 15,
-              child: DefaultTextStyle(
-                style: weatherStyle,
-              child: CardUnit(
-                width: width / 2,
-                height: boxSize / 4,
-                text: "Hi ${tempHigh}  Lo ${tempLow}",
-                fontSize: fontSize / 10,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-            ),
-
             Positioned(
               bottom: offset * 8,
               left: offset,
               right: offset,
               child: DefaultTextStyle(
                 style: weatherStyle,
-              child: CardUnit(
-                width: width,
-                height: boxSize / 4,
-                text: tempDegree,
-                fontSize: fontSize / 4,
-                fontWeight: FontWeight.normal,
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(left: 8.0),
+                        child: Icon(
+                          weatherIcon,
+                          size: fontSize / 5,
+                          color: colors[_Element.weatherText],
+                        ),
+                      ),
+                      Text(
+                        "  " + tempDegree,
+                        style: TextStyle(
+                            fontSize: fontSize / 4,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "  " + tempUnit,
+                        style: TextStyle(
+                            fontSize: fontSize / 10,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "  Hi ${tempHigh}  Lo ${tempLow}",
+                        style: TextStyle(
+                            fontSize: fontSize / 10,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ]),
               ),
             ),
-            ),
 
             Positioned(
-              bottom: offset * 15,
-              left: width / 2 - 20,
-              child: DefaultTextStyle(
-                style: weatherStyle,
-              child: CardUnit(
-                width: boxSize / 4,
-                height: boxSize / 4,
-                text: tempUnit,
-                fontSize: fontSize / 10,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-            ),
-
-            Positioned(
-                bottom: height / 4.5,
-                left: width / 3 + boxSize / 4,
-                child: Icon(
-                  weatherIcon,
-                  color: colors[_Element.weatherText],
-                )),
-
-            //location
-            Positioned(
-              bottom: offset*5,
-              right: offset*5,
+              bottom: offset * 10,
+              right: offset * 5,
               child: DefaultTextStyle(
                 style: locationStyle,
-                  child: CardUnit(
-                    width: width / 3,
-                    height: boxSize / 5,
-                    text: location,
-                    fontSize: fontSize / 10,
-                    fontWeight: FontWeight.normal,
-                    align: FractionalOffset.centerLeft,
+                child: CardUnit(
+                  width: boxSize,
+                  height: boxSize / 5,
+                  text: location,
+                  fontSize: fontSize / 10,
+                  fontWeight: FontWeight.bold,
+                  align: FractionalOffset.center,
                 ),
               ),
             ),
