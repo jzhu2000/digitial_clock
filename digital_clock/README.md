@@ -1,11 +1,18 @@
 # Digital Clock
 
-This app is an example of a digital clock.
-It has a light theme and a dark theme.
-See the [Analog Clock](../analog_clock) if you'd like an example that displays the weather and location.
+This app is a digital clock. It has a light theme and a dark theme. 
 
-<img src='digital.gif' width='350'>
+1) clock in 24 format or 12 format;
+2) animated minute and hour change;
+3) location;
+4) date;
+5) weather condition, temperature, high and low, in celsius and fahrenheit;
 
-<img src='digital_dark.png' width='350'>
+See screenshots:
 
-<img src='digital_light.png' width='350'>
+<img src='screenshot-dark-c-12.jpg' width='350'>
+
+<img src='screenshot-light-F-24.jpg' width='350'>
+
+
+Note: See the [Analog Clock](../analog_clock) if you'd like an example that displays the weather and location.
