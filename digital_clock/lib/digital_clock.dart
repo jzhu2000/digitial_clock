@@ -62,6 +62,7 @@ class _DigitalClockState extends State<DigitalClock> {
   int tempHigh;
 
   IconData weatherIcon;
+  WeatherCondition weatherCondition;
 
   @override
   void initState() {
@@ -100,7 +101,7 @@ class _DigitalClockState extends State<DigitalClock> {
       tempHigh = widget.model.high.round();
       tempLow = widget.model.low.round();
 
-      WeatherCondition weatherCondition = widget.model.weatherCondition;
+      weatherCondition = widget.model.weatherCondition;
       switch (weatherCondition) {
         case (WeatherCondition.cloudy):
           weatherIcon = WeatherIcons.cloudy;
@@ -165,38 +166,37 @@ class _DigitalClockState extends State<DigitalClock> {
         : _darkTheme;
     final hour =
         DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh').format(_dateTime);
+    debugPrint("hours ..." + hour);
     final am = DateFormat('a').format(_dateTime);
     final minute = DateFormat('mm').format(_dateTime);
-    final second = _dateTime.second;
     final today = DateFormat('E').format(_dateTime) +
         "  " +
         DateFormat('yMd').format(_dateTime);
 
+
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    final boxSize = height / 1.5;
+    final fontSize = boxSize * 0.7;
+    final fontSizeSecond = boxSize * 0.4;
+    final offset = 2.0;
+
     final defaultStyle = TextStyle(
       color: colors[_Element.text],
-      //fontFamily: 'PressStart2P',
-      //fontSize: fontSize,
+      fontFamily: 'Montserrat',
+      fontSize: fontSize,
     );
 
     final weatherStyle = TextStyle(
       color: colors[_Element.weatherText],
       fontWeight: FontWeight.w300,
       fontFamily: 'Montserrat',
-      //fontSize: fontSize,
     );
 
     final locationStyle = TextStyle(
       color: colors[_Element.locationText],
       fontFamily: 'Montserrat',
-      //fontSize: fontSize,
     );
-
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
-    final boxSize = height / 1.5;
-    final fontSize = boxSize * 0.8;
-    final fontSizeSecond = boxSize * 0.4;
-    final offset = 2.0;
 
     return Container(
       color: colors[_Element.background],
@@ -309,28 +309,45 @@ class _DigitalClockState extends State<DigitalClock> {
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.only(left: 8.0),
-                        child: Icon(
-                          weatherIcon,
-                          size: fontSize / 5,
-                          color: colors[_Element.weatherText],
+                        child: Container(
+//                          width: boxSize,
+                         height: boxSize /4 ,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              Icon(
+                                weatherIcon,
+                                size: fontSize / 9,
+                                color: colors[_Element.weatherText],
+                              ),
+                              Text(
+                                describeEnum(weatherCondition),
+                                style: TextStyle(
+                                    fontSize: fontSize / 12,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       Text(
-                        "  " + tempDegree,
+                        " " + tempDegree,
                         style: TextStyle(
-                            fontSize: fontSize / 4,
+                            fontSize: fontSize / 3.5,
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
                         "  " + tempUnit,
                         style: TextStyle(
-                            fontSize: fontSize / 10,
+                            fontSize: fontSize / 12,
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
                         "  Hi ${tempHigh}  Lo ${tempLow}",
                         style: TextStyle(
-                            fontSize: fontSize / 10,
+                            fontSize: fontSize / 12,
                             fontWeight: FontWeight.bold),
                       ),
                     ]),
